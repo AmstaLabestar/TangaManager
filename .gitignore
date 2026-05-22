@@ -35,4 +35,5 @@ Desktop.ini
 # do not track Markdown files except README.md.
 *.md
 !README.md
+!DEPLOYMENT.md
 

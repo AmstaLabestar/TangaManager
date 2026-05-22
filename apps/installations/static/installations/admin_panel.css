@@ -1,0 +1,36 @@
+:root{
+  --bg: #f3f6f9;
+  --panel: #eef3f7;
+  --muted: #868e96;
+  --accent: #e86b2f;
+  --soft-shadow: 12px 12px 24px rgba(15,20,25,0.06), -8px -8px 18px rgba(255,255,255,0.8);
+}
+body{background:var(--bg);font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;}
+.admin-shell{display:flex;min-height:100vh}
+.sidebar{width:220px;padding:28px;background:linear-gradient(180deg,var(--panel),#ffffff);box-shadow:var(--soft-shadow);border-radius:14px;margin:24px}
+.sidebar .brand{font-weight:700;color:var(--accent);margin-bottom:16px}
+.sidebar nav a{display:block;padding:10px 12px;border-radius:10px;color:#334155;margin:6px 0;text-decoration:none;transition:all .22s ease}
+.sidebar nav a.active, .sidebar nav a:hover{background:rgba(232,107,47,0.08);transform:translateX(4px)}
+.content-area{flex:1;padding:28px 24px;margin:24px}
+.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+.cards{display:flex;gap:16px;margin-bottom:22px}
+.card{flex:1;padding:18px;border-radius:12px}
+.soft-card{background:var(--panel);box-shadow:var(--soft-shadow);}
+.card-title{color:var(--muted);font-size:13px}
+.card-value{font-size:24px;font-weight:700;color:#0f172a;margin-top:6px}
+.btn.soft{background:linear-gradient(180deg,#fff,#f7f9fb);border:1px solid rgba(15,23,42,0.04);padding:8px 12px;border-radius:10px;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
+.btn{position:relative;overflow:hidden}
+.btn .ripple{position:absolute;width:16px;height:16px;background:rgba(15,23,42,0.06);border-radius:50%;transform:scale(0);pointer-events:none;animation:ripple .6s linear}
+@keyframes ripple{from{transform:scale(0);opacity:1}to{transform:scale(4);opacity:0}}
+.panel h2{margin:8px 0 12px;color:#0f172a}
+.table-wrap{overflow:auto;padding:8px}
+.list-table{width:100%;border-collapse:collapse}
+.list-table thead th{font-size:12px;color:var(--muted);text-align:left;padding:10px}
+.list-table tbody td{padding:12px 10px;border-top:1px solid rgba(15,23,42,0.03)}
+.row-fade{transition:transform .28s cubic-bezier(.2,.9,.3,1),opacity .28s}
+.row-fade:hover{transform:translateY(-4px);opacity:0.98}
+
+/* subtle focus outlines for keyboard users */
+a:focus, button:focus{outline:2px solid rgba(232,107,47,0.14);outline-offset:3px}
+
+@media (max-width:900px){.admin-shell{flex-direction:column}.sidebar{width:auto;display:flex;overflow:auto}}

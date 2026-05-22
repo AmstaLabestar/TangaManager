@@ -1,0 +1,33 @@
+{% extends "installations/base.html" %}
+
+{% block title %}Fiches - TANGA{% endblock %}
+
+{% block content %}
+<section class="app-card">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">Historique</p>
+      <h1>Fiches d'installation</h1>
+    </div>
+    <a href="{% url 'installations-create' %}" class="ghost-link">Nouvelle</a>
+  </header>
+
+  <div class="list-stack">
+    {% for fiche in fiches %}
+      <a class="list-item" href="{% url 'installations-detail' fiche.pk %}">
+        <span>
+          <strong>{{ fiche.client_nom }}</strong>
+          <small>{{ fiche.get_solution_display }} - {{ fiche.numero_serie }}</small>
+        </span>
+        <em>{{ fiche.date_installation }}</em>
+      </a>
+    {% empty %}
+      <div class="empty-state">
+        <strong>Aucune fiche pour le moment.</strong>
+        <a href="{% url 'installations-create' %}">Creer la premiere fiche</a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+

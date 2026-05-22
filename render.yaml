@@ -1,0 +1,46 @@
+services:
+  - type: web
+    name: tanga-manager-web
+    env: docker
+    branch: main
+    plan: starter
+    region: oregon
+    dockerfilePath: Dockerfile
+    startCommand: gunicorn config.wsgi:application --bind 0.0.0.0:8000
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "[\"your.domain.com\"]"
+      - key: DJANGO_CSRF_TRUSTED_ORIGINS
+        value: "[\"https://your.domain.com\"]"
+      - key: DEFAULT_FROM_EMAIL
+        value: "noreply@your.domain.com"
+      - key: DJANGO_SECRET_KEY
+        value: "change-me-to-a-secure-value"
+      - key: DATABASE_URL
+        value: "postgres://tanga:tanga@your-db-host:5432/tanga_manager"
+      - key: REDIS_URL
+        value: "redis://your-redis-host:6379/0"
+
+  - type: worker
+    name: tanga-manager-worker
+    env: docker
+    branch: main
+    plan: starter
+    region: oregon
+    dockerfilePath: Dockerfile
+    startCommand: celery -A config worker -l info
+    autoDeploy: true
+    envVars:
+      - key: DJANGO_DEBUG
+        value: "0"
+      - key: DJANGO_SECRET_KEY
+        value: "change-me-to-a-secure-value"
+      - key: DATABASE_URL
+        value: "postgres://tanga:tanga@your-db-host:5432/tanga_manager"
+      - key: REDIS_URL
+        value: "redis://your-redis-host:6379/0"
+
+*** End Patch

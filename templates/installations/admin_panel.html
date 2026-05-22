@@ -1,0 +1,65 @@
+{% extends 'installations/base.html' %}
+{% load static %}
+
+{% block title %}Admin Panel — TANGA{% endblock %}
+
+{% block extra_head %}
+  <link rel="stylesheet" href="{% static 'installations/admin_panel.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="admin-shell">
+  <aside class="sidebar">
+    <div class="brand">TANGA Admin</div>
+    <nav>
+      <a href="#" class="active">Dashboard</a>
+      <a href="{% url 'installations-index' %}">Fiches</a>
+      <a href="#">Utilisateurs</a>
+      <a href="#">Paramètres</a>
+    </nav>
+  </aside>
+  <section class="content-area">
+    <header class="topbar">
+      <h1>Dashboard</h1>
+      <div class="top-actions">
+        <button class="btn soft">Nouvelle fiche</button>
+      </div>
+    </header>
+
+    <div class="cards">
+      <div class="card soft-card">
+        <div class="card-title">Total fiches</div>
+        <div class="card-value">{{ total }}</div>
+      </div>
+      <div class="card soft-card">
+        <div class="card-title">Solutions</div>
+        <div class="card-value">{{ by_solution|length }}</div>
+      </div>
+    </div>
+
+    <section class="panel">
+      <h2>Dernières fiches</h2>
+      <div class="table-wrap soft-card">
+        <table class="list-table">
+          <thead><tr><th>ID</th><th>Titre</th><th>Solution</th></tr></thead>
+          <tbody>
+            {% for f in recent %}
+            <tr class="row-fade">
+              <td>{{ f.pk }}</td>
+              <td><a href="{% url 'installations-detail' f.pk %}">{{ f.client_nom|default:'(sans titre)' }}</a></td>
+              <td>{{ f.get_solution_display }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="3">Aucune fiche trouvée.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+  <script src="{% static 'installations/admin_panel.js' %}"></script>
+{% endblock %}

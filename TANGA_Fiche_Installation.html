@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="theme-color" content="#E8580A">
+<title>Fiche Installation — TANGA GROUP</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --orange:#E8580A;--orange-l:#FAD7C3;
+  --gris:#595959;--gris-l:#F5F5F5;
+  --vert:#1A7A3C;--vert-l:#E6F4EC;
+  --rouge:#C00000;--rouge-l:#FFEBEB;
+  --jaune-l:#FFFBEA;
+  --text:#1a1a1a;--text-sec:#666;--text-hint:#999;
+  --bg:#ffffff;--bg-sec:#F8F8F8;--bg-ter:#F2F2F2;
+  --border:0.5px solid #E0E0E0;
+  --rad:8px;--rad-lg:12px;
+}
+html,body{min-height:100%;background:#F0F0F0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;color:var(--text)}
+.app{max-width:480px;margin:0 auto;background:#F0F0F0;min-height:100vh;padding-bottom:32px}
+
+.top-bar{background:var(--orange);color:#fff;padding:16px 16px 14px;display:flex;align-items:center;gap:12px}
+.top-bar i{font-size:26px;flex-shrink:0}
+.top-bar h1{font-size:16px;font-weight:600;line-height:1.25}
+.top-bar p{font-size:11px;opacity:.8;margin-top:3px}
+
+.progress{height:4px;background:rgba(0,0,0,.15)}
+.progress-bar{height:4px;background:rgba(255,255,255,.8);transition:width .35s ease}
+
+.steps-wrap{background:rgba(0,0,0,.18)}
+.steps{display:flex;max-width:480px;margin:0 auto}
+.step-btn{flex:1;padding:9px 4px;font-size:10px;color:rgba(255,255,255,.55);border:none;background:none;cursor:pointer;font-family:inherit;text-align:center;border-bottom:2px solid transparent;transition:all .2s;letter-spacing:.02em}
+.step-btn.active{color:#fff;border-bottom-color:#fff;font-weight:600}
+
+.section{display:none;padding:14px 12px 0}
+.section.active{display:block}
+
+.card{background:var(--bg);border-radius:var(--rad-lg);padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+
+.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--text-sec);margin-bottom:14px;display:flex;align-items:center;gap:7px}
+.card-title i{font-size:15px;color:var(--orange)}
+
+label{display:block;font-size:12px;color:var(--text-sec);margin-bottom:5px;margin-top:12px;font-weight:500}
+label:first-of-type{margin-top:0}
+input[type=text],input[type=date],input[type=tel],input[type=number],select,textarea{
+  width:100%;border:1px solid #E0E0E0;border-radius:var(--rad);padding:10px 12px;
+  font-size:14px;font-family:inherit;color:var(--text);
+  background:var(--bg);outline:none;appearance:none;-webkit-appearance:none;
+  transition:border .15s
+}
+input:focus,select:focus,textarea:focus{border-color:var(--orange);box-shadow:0 0 0 3px rgba(232,88,10,.1)}
+textarea{resize:none;min-height:70px;line-height:1.55}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='%23999' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 9 6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:32px}
+
+.req{color:var(--orange)}
+
+.sol-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}
+.sol-btn{border:1px solid #E0E0E0;border-radius:var(--rad);padding:12px 8px;font-size:12px;cursor:pointer;background:var(--bg);color:var(--text);text-align:center;transition:all .2s;font-family:inherit;line-height:1.3}
+.sol-btn:active{transform:scale(.97)}
+.sol-btn.selected{background:var(--orange-l);border-color:var(--orange);color:var(--orange);font-weight:600}
+.sol-btn i{display:block;font-size:22px;margin-bottom:5px;color:inherit}
+
+.check-grid{display:flex;flex-direction:column;gap:7px;margin-top:4px}
+.check-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid #E0E0E0;border-radius:var(--rad);cursor:pointer;transition:all .2s;background:var(--bg);user-select:none}
+.check-item:active{transform:scale(.99)}
+.check-item.ok{background:var(--vert-l);border-color:var(--vert)}
+.check-item.nok{background:var(--rouge-l);border-color:var(--rouge)}
+.ci-label{font-size:13px;flex:1;color:var(--text);line-height:1.3}
+.ci-status{font-size:11px;font-weight:600;color:var(--text-hint);white-space:nowrap}
+.check-item.ok .ci-status{color:var(--vert)}
+.check-item.nok .ci-status{color:var(--rouge)}
+i.ci-icon{font-size:18px;color:#CCC;flex-shrink:0}
+.check-item.ok i.ci-icon{color:var(--vert)}
+.check-item.nok i.ci-icon{color:var(--rouge)}
+
+.sig-wrap{background:var(--bg-sec);border:1px dashed #CCC;border-radius:var(--rad);overflow:hidden;position:relative}
+canvas{display:block;width:100%;touch-action:none;cursor:crosshair;background:#fff}
+.sig-ph{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;color:var(--text-hint)}
+.sig-ph i{display:block;font-size:28px;opacity:.35;margin-bottom:4px}
+.sig-ph span{font-size:12px}
+.sig-actions{display:flex;gap:8px;margin-top:8px}
+.sig-actions button{flex:1;padding:9px;border:1px solid #E0E0E0;border-radius:var(--rad);font-size:12px;cursor:pointer;background:var(--bg);color:var(--text-sec);font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px}
+
+.nav-bar{display:flex;gap:10px;padding:12px}
+.btn-back{flex:1;padding:13px;border:1px solid #E0E0E0;border-radius:var(--rad);font-size:14px;cursor:pointer;background:var(--bg);color:var(--text-sec);font-family:inherit}
+.btn-next{flex:2;padding:13px;border:none;border-radius:var(--rad);font-size:14px;cursor:pointer;background:var(--orange);color:#fff;font-family:inherit;font-weight:600;display:flex;align-items:center;justify-content:center;gap:7px;box-shadow:0 2px 8px rgba(232,88,10,.3)}
+.btn-next:active{transform:scale(.98)}
+
+.tag-sn{display:inline-block;background:var(--bg-ter);border:1px solid #E0E0E0;border-radius:var(--rad);padding:5px 12px;font-size:12px;font-family:monospace;color:var(--text-sec);margin-top:6px}
+
+.rating-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.rating-btn{width:42px;height:42px;border:1px solid #E0E0E0;border-radius:var(--rad);font-size:14px;cursor:pointer;background:var(--bg);color:var(--text);font-family:inherit;display:flex;align-items:center;justify-content:center;transition:all .15s;font-weight:500}
+.rating-btn.sel{background:var(--orange);border-color:var(--orange);color:#fff}
+.rating-label{font-size:11px;color:var(--text-hint);margin-top:7px}
+
+.decl-box{background:var(--jaune-l);border:1px solid #E0CC80;border-radius:var(--rad);padding:14px;font-size:13px;line-height:1.7;color:var(--text-sec)}
+.decl-box strong{color:var(--text);font-weight:600}
+
+.success-screen{display:none;padding:40px 16px 32px;text-align:center}
+.success-screen.show{display:block}
+.success-icon{width:72px;height:72px;border-radius:50%;background:var(--vert-l);display:flex;align-items:center;justify-content:center;margin:0 auto 18px;border:2px solid var(--vert)}
+.success-icon i{font-size:36px;color:var(--vert)}
+.success-screen h2{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--text)}
+.success-screen > p{font-size:14px;color:var(--text-sec);line-height:1.6;margin-bottom:20px}
+
+.recap-card{background:var(--bg);border-radius:var(--rad-lg);padding:16px;margin:0 0 16px;text-align:left;box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.recap-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:0.5px solid #F0F0F0;font-size:13px;gap:8px}
+.recap-row:last-child{border-bottom:none}
+.recap-row .rl{color:var(--text-sec);flex-shrink:0}
+.recap-row .rv{font-weight:600;text-align:right}
+.badge-sol{background:var(--orange-l);color:var(--orange);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700}
+.badge-ok{background:var(--vert-l);color:var(--vert);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700}
+.badge-nok{background:var(--rouge-l);color:var(--rouge);border-radius:100px;padding:3px 10px;font-size:11px;font-weight:700}
+
+.btn-share{width:100%;padding:14px;border:none;border-radius:var(--rad);font-size:15px;cursor:pointer;background:var(--orange);color:#fff;font-family:inherit;font-weight:600;margin-bottom:10px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 2px 8px rgba(232,88,10,.3)}
+.btn-share:active{transform:scale(.98)}
+.btn-new{width:100%;padding:12px;border:1px solid #E0E0E0;border-radius:var(--rad);font-size:14px;cursor:pointer;background:var(--bg);color:var(--text-sec);font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px}
+
+.hint{font-size:11px;color:var(--text-hint);margin-top:5px;line-height:1.5}
+
+.sep{height:1px;background:#F0F0F0;margin:12px 0}
+
+@media print {
+  .nav-bar,.steps-wrap,.progress,.top-bar .top-bar-sub{display:none}
+  .section{display:block !important}
+  body{background:#fff}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="top-bar">
+    <i class="ti ti-tool" aria-hidden="true"></i>
+    <div>
+      <h1>Fiche d'installation</h1>
+      <p>TANGA GROUP — Formulaire technicien</p>
+    </div>
+  </div>
+
+  <div class="progress"><div class="progress-bar" id="prog" style="width:25%"></div></div>
+
+  <div class="steps-wrap" style="background:var(--orange)">
+    <div class="steps">
+      <button class="step-btn active" onclick="goStep(0)">1. Client</button>
+      <button class="step-btn" onclick="goStep(1)">2. Solution</button>
+      <button class="step-btn" onclick="goStep(2)">3. Checklist</button>
+      <button class="step-btn" onclick="goStep(3)">4. Signature</button>
+    </div>
+  </div>
+
+  <div id="main">
+
+    <!-- ═══ ÉTAPE 1 — CLIENT ═══ -->
+    <div class="section active" id="s0">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-building" aria-hidden="true"></i>Informations client</div>
+        <label>Nom de l'entreprise / Client <span class="req">*</span></label>
+        <input type="text" id="f-client" placeholder="ex : BTP SARL Ouagadougou" autocomplete="organization">
+        <label>Contact principal <span class="req">*</span></label>
+        <input type="text" id="f-contact" placeholder="Nom et prénom" autocomplete="name">
+        <label>Poste / Fonction</label>
+        <input type="text" id="f-poste" placeholder="ex : DRH, Directeur général...">
+        <label>Téléphone</label>
+        <input type="tel" id="f-tel" placeholder="+226 XX XX XX XX" autocomplete="tel">
+        <label>Email</label>
+        <input type="text" id="f-email" placeholder="contact@entreprise.com">
+        <label>Adresse / Site d'installation</label>
+        <input type="text" id="f-adresse" placeholder="Secteur, commune, ville">
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="ti ti-hard-hat" aria-hidden="true"></i>Technicien TANGA GROUP</div>
+        <label>Nom du technicien <span class="req">*</span></label>
+        <input type="text" id="f-tech" placeholder="Votre nom complet">
+        <label>Date d'installation <span class="req">*</span></label>
+        <input type="date" id="f-date">
+        <label>Heure de fin d'installation</label>
+        <input type="text" id="f-heure" placeholder="ex : 14h30">
+      </div>
+      <div class="nav-bar">
+        <button class="btn-next" style="flex:3" onclick="nextStep(0)">Étape suivante <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══ ÉTAPE 2 — SOLUTION ═══ -->
+    <div class="section" id="s1">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-device-tablet" aria-hidden="true"></i>Solution installée <span class="req">*</span></div>
+        <div class="sol-grid" id="sol-grid">
+          <div class="sol-btn" onclick="selectSol(this,'PresenseRH RFID')"><i class="ti ti-wifi"></i>PresenseRH RFID</div>
+          <div class="sol-btn" onclick="selectSol(this,'PresenseRH Biométrique')"><i class="ti ti-fingerprint"></i>PresenseRH Biométrique</div>
+          <div class="sol-btn" onclick="selectSol(this,'PresenseRH QR Code')"><i class="ti ti-qrcode"></i>PresenseRH QR Code</div>
+          <div class="sol-btn" onclick="selectSol(this,'FeelBack Terminal')"><i class="ti ti-mood-smile"></i>FeelBack Terminal</div>
+          <div class="sol-btn" onclick="selectSol(this,'SmartCard / Carte fidélité')"><i class="ti ti-credit-card"></i>SmartCard</div>
+          <div class="sol-btn" onclick="selectSol(this,'KUILINGA École')"><i class="ti ti-school"></i>KUILINGA École</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-cpu" aria-hidden="true"></i>Matériel installé</div>
+        <label>Numéro de série <span class="req">*</span></label>
+        <input type="text" id="f-sn" placeholder="ex : BIO-2026-RFID-001" oninput="updateSN()" style="font-family:monospace">
+        <div class="tag-sn" id="sn-tag">—</div>
+        <label>Quantité / Unités installées</label>
+        <input type="text" id="f-qty" placeholder="ex : 1 lecteur RFID + 12 badges">
+        <label>Version firmware</label>
+        <input type="text" id="f-fw" placeholder="ex : v2.1.3">
+        <label>Réseau WiFi configuré (SSID)</label>
+        <input type="text" id="f-wifi" placeholder="Nom du réseau WiFi du client">
+        <label>Adresse IP statique (si applicable)</label>
+        <input type="text" id="f-ip" placeholder="ex : 192.168.1.50">
+        <label>Accès distant configuré</label>
+        <select id="f-ssh">
+          <option value="">— Sélectionner —</option>
+          <option value="SSH + VPN configuré">SSH + VPN configuré</option>
+          <option value="VPN uniquement">VPN uniquement</option>
+          <option value="Non applicable">Non applicable</option>
+          <option value="Non configuré (prévoir)">Non configuré (prévoir)</option>
+        </select>
+      </div>
+      <div class="nav-bar">
+        <button class="btn-back" onclick="goStep(0)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Retour</button>
+        <button class="btn-next" onclick="nextStep(1)">Étape suivante <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══ ÉTAPE 3 — CHECKLIST ═══ -->
+    <div class="section" id="s2">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-checklist" aria-hidden="true"></i>Checklist de mise en service</div>
+        <p class="hint" style="margin-bottom:12px">Appuyer sur chaque point : 1 tap = <strong style="color:var(--vert)">OK</strong> · 2 taps = <strong style="color:var(--rouge)">Problème</strong> · 3 taps = réinitialiser</p>
+        <div class="check-grid" id="checks"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-star" aria-hidden="true"></i>Maîtrise client après formation</div>
+        <p class="hint" style="margin-bottom:8px">Le client sait-il utiliser le système de manière autonome ?</p>
+        <div class="rating-row" id="rating-row">
+          <div class="rating-btn" onclick="selectRating(1)">1</div>
+          <div class="rating-btn" onclick="selectRating(2)">2</div>
+          <div class="rating-btn" onclick="selectRating(3)">3</div>
+          <div class="rating-btn" onclick="selectRating(4)">4</div>
+          <div class="rating-btn" onclick="selectRating(5)">5</div>
+        </div>
+        <p class="rating-label" id="rating-label">1 = pas du tout compris &nbsp;·&nbsp; 5 = parfaitement autonome</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-message-dots" aria-hidden="true"></i>Observations & points en suspens</div>
+        <textarea id="f-obs" placeholder="Problèmes rencontrés, conditions particulières, actions restantes à planifier..."></textarea>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn-back" onclick="goStep(1)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Retour</button>
+        <button class="btn-next" onclick="nextStep(2)">Vers la signature <i class="ti ti-arrow-right" aria-hidden="true"></i></button>
+      </div>
+    </div>
+
+    <!-- ═══ ÉTAPE 4 — SIGNATURE ═══ -->
+    <div class="section" id="s3">
+      <div class="card">
+        <div class="card-title"><i class="ti ti-file-description" aria-hidden="true"></i>Déclaration de réception</div>
+        <div class="decl-box" id="decl-text">
+          Je soussigné(e), <strong id="d-contact">—</strong>, représentant <strong id="d-client">—</strong>, atteste avoir réceptionné et testé la solution <strong id="d-sol">—</strong> installée ce jour par le technicien TANGA GROUP <strong id="d-tech">—</strong>. Le matériel est opérationnel, la configuration réseau a été effectuée, et la formation de prise en main a été dispensée. Les éventuelles réserves sont consignées dans les observations.
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-signature" aria-hidden="true"></i>Signature du client <span class="req">*</span></div>
+        <p class="hint" style="margin-bottom:8px">Le client signe dans la zone ci-dessous avec son doigt</p>
+        <div class="sig-wrap">
+          <canvas id="sig" width="440" height="140"></canvas>
+          <div class="sig-ph" id="sig-ph"><i class="ti ti-pencil"></i><span>Signer ici</span></div>
+        </div>
+        <div class="sig-actions">
+          <button onclick="clearSig('sig','sig-ph',1)"><i class="ti ti-refresh" aria-hidden="true"></i> Effacer</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><i class="ti ti-user-check" aria-hidden="true"></i>Signature du technicien <span class="req">*</span></div>
+        <div class="sig-wrap">
+          <canvas id="sig2" width="440" height="110"></canvas>
+          <div class="sig-ph" id="sig2-ph"><i class="ti ti-pencil"></i><span>Signature technicien</span></div>
+        </div>
+        <div class="sig-actions">
+          <button onclick="clearSig('sig2','sig2-ph',2)"><i class="ti ti-refresh" aria-hidden="true"></i> Effacer</button>
+        </div>
+      </div>
+
+      <div class="nav-bar">
+        <button class="btn-back" onclick="goStep(2)"><i class="ti ti-arrow-left" aria-hidden="true"></i> Retour</button>
+        <button class="btn-next" onclick="submit()" id="btn-submit"><i class="ti ti-check" aria-hidden="true"></i> Valider la fiche</button>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+
+  <!-- ═══ ÉCRAN DE SUCCÈS ═══ -->
+  <div class="success-screen" id="success">
+    <div class="success-icon"><i class="ti ti-circle-check" aria-hidden="true"></i></div>
+    <h2>Fiche validée &amp; signée</h2>
+    <p>L'installation est officiellement réceptionnée.<br>Partagez le résumé avec le bureau TANGA GROUP.</p>
+
+    <div class="recap-card" id="recap"></div>
+
+    <button class="btn-share" onclick="shareRecap()">
+      <i class="ti ti-share" aria-hidden="true"></i> Partager le résumé
+    </button>
+    <button class="btn-share" onclick="saveImage()" style="background:#333;box-shadow:none;margin-bottom:10px">
+      <i class="ti ti-download" aria-hidden="true"></i> Sauvegarder (image)
+    </button>
+    <button class="btn-new" onclick="resetForm()">
+      <i class="ti ti-plus" aria-hidden="true"></i> Nouvelle fiche d'installation
+    </button>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+var selSol = '';
+var selRating = 0;
+var sigDone = [false, false];
+var checkStates = [];
+
+var CHECKS = {
+  default: [
+    'Alimentation et mise sous tension vérifiée',
+    'Connexion WiFi / réseau local établie',
+    'Communication avec TangaFlow confirmée',
+    'Test de lecture fonctionnel (badge / empreinte / QR)',
+    'Enregistrement des utilisateurs de test effectué',
+    'Tableau de bord accessible et données visibles',
+    'Accès distant technicien configuré (SSH/VPN)',
+    'Formation utilisateur dispensée (min. 30 min)',
+    'Documentation papier remise au client',
+    'Numéro de série enregistré dans TangaFlow',
+  ],
+  feelback: [
+    'Alimentation et mise sous tension vérifiée',
+    'Connexion WiFi / réseau local établie',
+    'Communication avec TangaFlow confirmée',
+    'Test boutons satisfaction fonctionnel (4 niveaux)',
+    'Affichage écran et LEDs opérationnels',
+    'Données de retour visibles dans le tableau de bord',
+    'Accès distant technicien configuré (SSH/VPN)',
+    'Emplacement de fixation validé avec le client',
+    'Formation utilisateur dispensée',
+    'Documentation papier remise au client',
+  ],
+  smartcard: [
+    'Alimentation et mise sous tension vérifiée',
+    'Connexion WiFi / réseau local établie',
+    'Communication avec TangaFlow confirmée',
+    'Test de lecture carte réussi',
+    'Encodage des cartes de démonstration effectué',
+    'Interface partenaires accessible',
+    'Accès distant technicien configuré',
+    'Formation remise au responsable',
+    'Documentation remise au client',
+  ],
+};
+
+function getChecks() {
+  if (selSol.includes('FeelBack')) return CHECKS.feelback;
+  if (selSol.includes('SmartCard')) return CHECKS.smartcard;
+  return CHECKS.default;
+}
+
+function buildChecks() {
+  var items = getChecks();
+  checkStates = items.map(function(){ return 0; });
+  var g = document.getElementById('checks');
+  g.innerHTML = '';
+  items.forEach(function(txt, i) {
+    var d = document.createElement('div');
+    d.className = 'check-item';
+    d.id = 'ci-' + i;
+    d.innerHTML = '<i class="ti ti-circle ci-icon" aria-hidden="true"></i>'
+      + '<span class="ci-label">' + txt + '</span>'
+      + '<span class="ci-status">À vérifier</span>';
+    d.onclick = function(){ toggleCheck(i, d); };
+    g.appendChild(d);
+  });
+}
+
+function toggleCheck(i, el) {
+  checkStates[i] = (checkStates[i] + 1) % 3;
+  var s = checkStates[i];
+  el.className = 'check-item' + (s === 1 ? ' ok' : s === 2 ? ' nok' : '');
+  var icon = el.querySelector('i.ci-icon');
+  var status = el.querySelector('.ci-status');
+  if (s === 1) { icon.className = 'ti ti-circle-check ci-icon'; status.textContent = 'OK'; }
+  else if (s === 2) { icon.className = 'ti ti-circle-x ci-icon'; status.textContent = 'Problème'; }
+  else { icon.className = 'ti ti-circle ci-icon'; status.textContent = 'À vérifier'; }
+}
+
+function selectSol(el, val) {
+  document.querySelectorAll('.sol-btn').forEach(function(b){ b.classList.remove('selected'); });
+  el.classList.add('selected');
+  selSol = val;
+  buildChecks();
+}
+
+function selectRating(n) {
+  selRating = n;
+  document.querySelectorAll('.rating-btn').forEach(function(b, i){
+    b.classList.toggle('sel', i < n);
+  });
+  var labels = ['','Pas du tout compris','Peu compris','Partiellement maîtrisé','Bien compris','Parfaitement autonome'];
+  document.getElementById('rating-label').textContent = labels[n];
+}
+
+function updateSN() {
+  var v = document.getElementById('f-sn').value.trim();
+  document.getElementById('sn-tag').textContent = v || '—';
+}
+
+function goStep(n) {
+  document.querySelectorAll('.section').forEach(function(s, i){ s.classList.toggle('active', i === n); });
+  document.querySelectorAll('.step-btn').forEach(function(b, i){ b.classList.toggle('active', i === n); });
+  document.getElementById('prog').style.width = ((n + 1) / 4 * 100) + '%';
+  window.scrollTo(0, 0);
+  if (n === 3) fillDecl();
+}
+
+function v(id){ return document.getElementById(id).value.trim(); }
+
+function nextStep(from) {
+  if (from === 0) {
+    if (!v('f-client') || !v('f-contact') || !v('f-tech') || !v('f-date')) {
+      alert('Merci de remplir les champs obligatoires marqués *');
+      return;
+    }
+  }
+  if (from === 1) {
+    if (!selSol) { alert('Veuillez sélectionner une solution installée'); return; }
+    if (!v('f-sn')) { alert('Le numéro de série est requis'); return; }
+  }
+  goStep(from + 1);
+}
+
+function fillDecl() {
+  document.getElementById('d-contact').textContent = v('f-contact') || '—';
+  document.getElementById('d-client').textContent = v('f-client') || '—';
+  document.getElementById('d-sol').textContent = selSol || '—';
+  document.getElementById('d-tech').textContent = v('f-tech') || '—';
+}
+
+function submit() {
+  if (!sigDone[0]) { alert('La signature du client est requise'); return; }
+  if (!sigDone[1]) { alert('La signature du technicien est requise'); return; }
+  var okCount = checkStates.filter(function(x){ return x === 1; }).length;
+  var nokCount = checkStates.filter(function(x){ return x === 2; }).length;
+  var total = checkStates.length;
+  var dateStr = v('f-date') ? new Date(v('f-date') + 'T12:00:00').toLocaleDateString('fr-FR') : '—';
+  var r = document.getElementById('recap');
+  r.innerHTML =
+    row('Client', v('f-client')) +
+    row('Contact', v('f-contact') + (v('f-poste') ? ' · ' + v('f-poste') : '')) +
+    row('Solution', '<span class="badge-sol">' + selSol + '</span>') +
+    row('N° de série', '<span style="font-family:monospace;font-size:12px">' + (v('f-sn') || '—') + '</span>') +
+    row('Date', dateStr + (v('f-heure') ? ' · ' + v('f-heure') : '')) +
+    row('Technicien', v('f-tech')) +
+    row('Checklist', '<span class="' + (nokCount > 0 ? 'badge-nok' : 'badge-ok') + '">' + okCount + '/' + total + ' OK' + (nokCount > 0 ? ' · ' + nokCount + ' pb' : '') + '</span>') +
+    row('Formation', selRating ? selRating + '/5' : '—') +
+    row('Statut', '<span class="badge-ok">Signé</span>');
+  document.getElementById('main').style.display = 'none';
+  document.getElementById('success').classList.add('show');
+  document.querySelector('.steps-wrap').style.display = 'none';
+}
+
+function row(l, rv) {
+  return '<div class="recap-row"><span class="rl">' + l + '</span><span class="rv">' + rv + '</span></div>';
+}
+
+function buildShareText() {
+  var dateStr = v('f-date') ? new Date(v('f-date') + 'T12:00:00').toLocaleDateString('fr-FR') : '—';
+  var okCount = checkStates.filter(function(x){ return x === 1; }).length;
+  var nokCount = checkStates.filter(function(x){ return x === 2; }).length;
+  return '✅ TANGA GROUP — Fiche Installation\n'
+    + '─────────────────────────\n'
+    + '🏢 Client : ' + v('f-client') + '\n'
+    + '👤 Contact : ' + v('f-contact') + (v('f-poste') ? ' (' + v('f-poste') + ')' : '') + '\n'
+    + '📱 ' + v('f-tel') + '\n'
+    + '📦 Solution : ' + selSol + '\n'
+    + '🔢 S/N : ' + (v('f-sn') || '—') + '\n'
+    + '📅 Date : ' + dateStr + (v('f-heure') ? ' à ' + v('f-heure') : '') + '\n'
+    + '👷 Technicien : ' + v('f-tech') + '\n'
+    + '─────────────────────────\n'
+    + '✔️ Checklist : ' + okCount + ' OK' + (nokCount > 0 ? ' · ⚠️ ' + nokCount + ' problème(s)' : '') + '\n'
+    + '📚 Formation client : ' + (selRating ? selRating + '/5' : '—') + '\n'
+    + (v('f-obs') ? '📝 Notes : ' + v('f-obs') + '\n' : '')
+    + '─────────────────────────\n'
+    + '🖊️ Signé par le client et le technicien\n'
+    + '🟢 Statut : RÉCEPTIONNÉ';
+}
+
+function shareRecap() {
+  var txt = buildShareText();
+  if (navigator.share) {
+    navigator.share({ title: 'Fiche installation TANGA GROUP', text: txt }).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(txt).then(function(){
+      alert('Résumé copié dans le presse-papiers !');
+    }).catch(function(){
+      prompt('Copier ce résumé :', txt);
+    });
+  }
+}
+
+function saveImage() {
+  var card = document.getElementById('recap');
+  alert('Pour sauvegarder : faites une capture d\'écran de cette page.\n\nSur Android : bouton volume bas + power\nSur iPhone : power + volume haut');
+}
+
+function resetForm() {
+  document.getElementById('main').style.display = 'block';
+  document.getElementById('success').classList.remove('show');
+  document.querySelector('.steps-wrap').style.display = 'block';
+  document.querySelectorAll('input, textarea, select').forEach(function(el){ el.value = ''; });
+  document.querySelectorAll('.sol-btn').forEach(function(b){ b.classList.remove('selected'); });
+  selSol = ''; selRating = 0; sigDone = [false, false];
+  document.querySelectorAll('.rating-btn').forEach(function(b){ b.classList.remove('sel'); });
+  document.getElementById('rating-label').textContent = '1 = pas du tout compris · 5 = parfaitement autonome';
+  document.getElementById('sn-tag').textContent = '—';
+  document.getElementById('checks').innerHTML = '';
+  clearSig('sig','sig-ph',1);
+  clearSig('sig2','sig2-ph',2);
+  goStep(0);
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+}
+
+/* ── Signature pad ── */
+function initSig(canvasId, phId, idx) {
+  var canvas = document.getElementById(canvasId);
+  var ph = document.getElementById(phId);
+  var ctx = canvas.getContext('2d');
+  ctx.strokeStyle = '#1a1a1a';
+  ctx.lineWidth = 2.2;
+  ctx.lineCap = 'round';
+  ctx.lineJoin = 'round';
+  var drawing = false;
+  var lastX, lastY;
+
+  function getPos(e) {
+    var r = canvas.getBoundingClientRect();
+    var sx = canvas.width / r.width;
+    var sy = canvas.height / r.height;
+    if (e.touches) {
+      return [(e.touches[0].clientX - r.left) * sx, (e.touches[0].clientY - r.top) * sy];
+    }
+    return [(e.clientX - r.left) * sx, (e.clientY - r.top) * sy];
+  }
+  function start(e) {
+    e.preventDefault();
+    drawing = true;
+    var p = getPos(e);
+    lastX = p[0]; lastY = p[1];
+    ph.style.display = 'none';
+    sigDone[idx - 1] = true;
+  }
+  function move(e) {
+    if (!drawing) return;
+    e.preventDefault();
+    var p = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(lastX, lastY);
+    ctx.lineTo(p[0], p[1]);
+    ctx.stroke();
+    lastX = p[0]; lastY = p[1];
+  }
+  function stop() { drawing = false; }
+
+  canvas.addEventListener('mousedown', start);
+  canvas.addEventListener('mousemove', move);
+  canvas.addEventListener('mouseup', stop);
+  canvas.addEventListener('mouseleave', stop);
+  canvas.addEventListener('touchstart', start, { passive: false });
+  canvas.addEventListener('touchmove', move, { passive: false });
+  canvas.addEventListener('touchend', stop);
+}
+
+function clearSig(canvasId, phId, idx) {
+  var c = document.getElementById(canvasId);
+  c.getContext('2d').clearRect(0, 0, c.width, c.height);
+  document.getElementById(phId).style.display = 'block';
+  sigDone[idx - 1] = false;
+}
+
+/* Init */
+document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+initSig('sig', 'sig-ph', 1);
+initSig('sig2', 'sig2-ph', 2);
+</script>
+</body>
+</html>

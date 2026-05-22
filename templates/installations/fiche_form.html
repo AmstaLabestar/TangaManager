@@ -1,0 +1,137 @@
+{% extends "installations/base.html" %}
+{% load static %}
+
+{% block title %}Nouvelle fiche - TANGA{% endblock %}
+
+{% block content %}
+<form method="post" class="app-card" id="installation-form" novalidate>
+  {% csrf_token %}
+  {{ form.checklist_statuses }}
+  {{ form.signature_client_data }}
+  {{ form.signature_technicien_data }}
+
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">TANGA GROUP</p>
+      <h1>Fiche d'installation</h1>
+    </div>
+    <a href="{% url 'installations-index' %}" class="ghost-link">Fiches</a>
+  </header>
+
+  {% if form.errors %}
+    <div class="notice">
+      Certains champs doivent etre corriges avant la signature finale.
+    </div>
+  {% endif %}
+
+  <section class="progress-panel">
+    <div class="progress-track"><span id="progress-bar"></span></div>
+    <div class="steps" aria-label="Progression">
+      <button type="button" class="step-tab is-active" data-jump="0">Client</button>
+      <button type="button" class="step-tab" data-jump="1">Solution</button>
+      <button type="button" class="step-tab" data-jump="2">Checklist</button>
+      <button type="button" class="step-tab" data-jump="3">Signature</button>
+    </div>
+  </section>
+
+  <section class="screen is-active" data-step="0">
+    <div class="section-head">
+      <span class="step-count">1/4</span>
+      <h2>Client et technicien</h2>
+    </div>
+    <div class="grid">
+      <label>Entreprise / client {{ form.client_nom }}</label>
+      <label>Contact principal {{ form.client_contact }}</label>
+      <label>Poste {{ form.client_poste }}</label>
+      <label>Telephone {{ form.client_telephone }}</label>
+      <label>Email {{ form.client_email }}</label>
+      <label>Adresse / site {{ form.client_adresse }}</label>
+      <label>Technicien TANGA {{ form.technicien_nom }}</label>
+      <label>Date {{ form.date_installation }}</label>
+      <label>Heure de fin {{ form.heure_installation }}</label>
+    </div>
+  </section>
+
+  <section class="screen" data-step="1">
+    <div class="section-head">
+      <span class="step-count">2/4</span>
+      <h2>Solution installee</h2>
+    </div>
+    <div class="solution-select" id="solution-cards">
+      {% for code, label in solutions %}
+        <button type="button" class="choice-card" data-solution="{{ code }}">
+          <span>{{ label }}</span>
+          <small data-checklist-hint="{{ code }}">Checklist adaptee</small>
+        </button>
+      {% endfor %}
+    </div>
+    <div class="hidden-native">{{ form.solution }}</div>
+    <div class="grid">
+      <label>Numero de serie {{ form.numero_serie }}</label>
+      <label>Quantite / unites {{ form.quantite }}</label>
+      <label>Version firmware {{ form.version_firmware }}</label>
+      <label>WiFi configure {{ form.wifi_ssid }}</label>
+      <label>IP statique {{ form.ip_statique }}</label>
+      <label>Acces distant {{ form.acces_distant }}</label>
+    </div>
+  </section>
+
+  <section class="screen" data-step="2">
+    <div class="section-head">
+      <span class="step-count">3/4</span>
+      <h2>Mise en service</h2>
+    </div>
+    <p class="soft-copy">Touchez chaque point pour passer de A verifier a OK, puis Probleme.</p>
+    <div class="checklist" id="checklist"></div>
+    <div class="rating-block">
+      <label>Note de formation client</label>
+      <div class="rating-row" id="rating-row">
+        {% for value in "12345" %}
+          <button type="button" data-rating="{{ value }}">{{ value }}</button>
+        {% endfor %}
+      </div>
+      {{ form.note_formation }}
+      <p id="rating-label" class="soft-copy">Selectionnez le niveau d'autonomie du client.</p>
+    </div>
+    <label>Observations {{ form.observations }}</label>
+  </section>
+
+  <section class="screen" data-step="3">
+    <div class="section-head">
+      <span class="step-count">4/4</span>
+      <h2>Reception signee</h2>
+    </div>
+    <div class="declaration" id="declaration">
+      La solution sera receptionnee apres signature du client et du technicien.
+    </div>
+    <div class="signature-grid">
+      <div>
+        <label>Signature client</label>
+        <div class="signature-pad">
+          <canvas id="client-signature" width="760" height="250"></canvas>
+          <span>Signer ici</span>
+        </div>
+        <button type="button" class="mini-button" data-clear="client-signature">Effacer</button>
+      </div>
+      <div>
+        <label>Signature technicien</label>
+        <div class="signature-pad">
+          <canvas id="tech-signature" width="760" height="250"></canvas>
+          <span>Signature technicien</span>
+        </div>
+        <button type="button" class="mini-button" data-clear="tech-signature">Effacer</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="actionbar">
+    <button type="button" class="secondary-action" id="back-button">Retour</button>
+    <button type="button" class="primary-action" id="next-button">Continuer</button>
+    <button type="submit" class="primary-action is-hidden" id="submit-button">Signer et enregistrer</button>
+  </footer>
+</form>
+
+<script id="checklists-data" type="application/json">{{ checklists_json|safe }}</script>
+<script src="{% static 'installations/app.js' %}"></script>
+{% endblock %}
+

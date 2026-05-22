@@ -1,0 +1,53 @@
+{% extends "installations/base.html" %}
+
+{% block title %}Fiche signee - TANGA{% endblock %}
+
+{% block content %}
+<article class="app-card result-card">
+  <header class="topbar success">
+    <div>
+      <p class="eyebrow">Reception confirmee</p>
+      <h1>{{ fiche.client_nom }}</h1>
+    </div>
+    <a href="{% url 'installations-create' %}" class="ghost-link">Nouvelle</a>
+  </header>
+
+  <section class="recap-grid">
+    <div><span>Solution</span><strong>{{ fiche.get_solution_display }}</strong></div>
+    <div><span>Serie</span><strong>{{ fiche.numero_serie }}</strong></div>
+    <div><span>Technicien</span><strong>{{ fiche.technicien_nom }}</strong></div>
+    <div><span>Date</span><strong>{{ fiche.date_installation }}</strong></div>
+    <div><span>Checklist</span><strong>{{ fiche.ok_count }}/{{ fiche.checklist_items.count }} OK</strong></div>
+    <div><span>Formation</span><strong>{{ fiche.note_formation }}/5</strong></div>
+  </section>
+
+  <section class="detail-section">
+    <h2>Checklist</h2>
+    {% for item in fiche.checklist_items.all %}
+      <div class="detail-row {{ item.statut }}">
+        <span>{{ item.ordre }}. {{ item.libelle }}</span>
+        <strong>{{ item.get_statut_display }}</strong>
+      </div>
+    {% endfor %}
+  </section>
+
+  <section class="detail-section">
+    <h2>Jalons de suivi</h2>
+    {% for jalon in fiche.jalons.all %}
+      <div class="detail-row">
+        <span>{{ jalon.get_type_jalon_display }}</span>
+        <strong>{{ jalon.date_prevue }}</strong>
+      </div>
+    {% endfor %}
+  </section>
+
+  <section class="detail-section">
+    <h2>Signatures</h2>
+    <div class="signature-preview">
+      <img src="{{ fiche.signature_client.url }}" alt="Signature client">
+      <img src="{{ fiche.signature_technicien.url }}" alt="Signature technicien">
+    </div>
+  </section>
+</article>
+{% endblock %}
+

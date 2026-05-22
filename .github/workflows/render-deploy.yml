@@ -1,0 +1,25 @@
+name: Render Deploy
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Render CLI
+        run: npm install -g @render/render-cli
+
+      - name: Login to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: render login --api-key "$RENDER_API_KEY"
+
+      - name: Deploy to Render
+        run: render deploy --confirm

@@ -1,0 +1,32 @@
+{% extends "installations/base.html" %}
+
+{% block title %}Connexion - TANGA Manage Support{% endblock %}
+
+{% block content %}
+<section class="app-card auth-card">
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">TANGA GROUP</p>
+      <h1>Connexion</h1>
+    </div>
+  </header>
+
+  {% if form.errors %}
+    <div class="notice">Identifiants invalides. Verifiez votre nom d'utilisateur et votre mot de passe.</div>
+  {% endif %}
+
+  <form method="post" class="auth-form">
+    {% csrf_token %}
+    <label>
+      Nom d'utilisateur
+      {{ form.username }}
+    </label>
+    <label>
+      Mot de passe
+      {{ form.password }}
+    </label>
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="primary-action" type="submit">Se connecter</button>
+  </form>
+</section>
+{% endblock %}

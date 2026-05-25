@@ -570,6 +570,28 @@ textarea:focus {
   font-weight: 850;
 }
 
+.auth-card {
+  margin-top: 42px;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+  padding: 22px;
+}
+
+.auth-form input[type="text"],
+.auth-form input[type="password"] {
+  width: 100%;
+  min-height: 48px;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 15px;
+  color: var(--ink);
+  background: #fff;
+  outline: 0;
+}
+
 @media (max-width: 640px) {
   .shell {
     padding: 0;
@@ -607,4 +629,3 @@ textarea:focus {
     min-height: 78px;
   }
 }
-

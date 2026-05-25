@@ -2,6 +2,7 @@ import json
 import shutil
 import tempfile
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase, override_settings
 from django.urls import reverse
 
@@ -30,7 +31,26 @@ class InstallationFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["status"], "ok")
 
+    def test_staff_admin_panel_renders(self):
+        user = get_user_model().objects.create_user(
+            username="admin",
+            password="test-password",
+            is_staff=True,
+        )
+        self.client.force_login(user)
+
+        response = self.client.get(reverse("installations-admin-panel"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Dashboard")
+
     def test_create_signed_installation_creates_checklist_and_jalons(self):
+        user = get_user_model().objects.create_user(
+            username="technicien",
+            password="test-password",
+        )
+        self.client.force_login(user)
+
         statuses = ["ok"] * len(checklist_for_solution("feelback"))
         response = self.client.post(
             reverse("installations-create"),

@@ -1,62 +1,166 @@
-{% extends 'installations/base.html' %}
+{% extends "installations/base.html" %}
 {% load static %}
 
-{% block title %}Admin Panel — TANGA{% endblock %}
+{% block title %}Dashboard admin - TANGA{% endblock %}
+{% block body_class %}admin-page{% endblock %}
 
 {% block extra_head %}
   <link rel="stylesheet" href="{% static 'installations/admin_panel.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="admin-shell">
-  <aside class="sidebar">
-    <div class="brand">TANGA Admin</div>
-    <nav>
-      <a href="#" class="active">Dashboard</a>
-      <a href="{% url 'installations-index' %}">Fiches</a>
-      <a href="#">Utilisateurs</a>
-      <a href="#">Paramètres</a>
+<div class="admin-experience">
+  <aside class="admin-rail" aria-label="Navigation admin">
+    <a class="brand-mark" href="{% url 'installations-admin-panel' %}">
+      <span>T</span>
+      <strong>TANGA</strong>
+    </a>
+    <nav class="rail-nav">
+      <a class="is-active" href="{% url 'installations-admin-panel' %}" aria-current="page">
+        <span class="nav-icon">01</span>
+        Dashboard
+      </a>
+      <a href="{% url 'installations-index' %}">
+        <span class="nav-icon">02</span>
+        Fiches
+      </a>
+      <a href="{% url 'admin:index' %}">
+        <span class="nav-icon">03</span>
+        Django admin
+      </a>
     </nav>
+    <div class="rail-footer">
+      <span>Connecte</span>
+      <strong>{{ request.user.get_username }}</strong>
+    </div>
   </aside>
-  <section class="content-area">
-    <header class="topbar">
-      <h1>Dashboard</h1>
-      <div class="top-actions">
-        <button class="btn soft">Nouvelle fiche</button>
+
+  <main class="admin-main">
+    <header class="hero-panel">
+      <div>
+        <p class="overline">Operations terrain</p>
+        <h1>Dashboard</h1>
+        <p class="hero-copy">Vue claire des installations, signatures, alertes checklist et suivis clients.</p>
+      </div>
+      <div class="hero-actions">
+        <a class="icon-action" href="{% url 'installations-index' %}" aria-label="Voir les fiches">
+          <span>F</span>
+        </a>
+        <a class="primary-link" href="{% url 'installations-create' %}">Nouvelle fiche</a>
       </div>
     </header>
 
-    <div class="cards">
-      <div class="card soft-card">
-        <div class="card-title">Total fiches</div>
-        <div class="card-value">{{ total }}</div>
-      </div>
-      <div class="card soft-card">
-        <div class="card-title">Solutions</div>
-        <div class="card-value">{{ by_solution|length }}</div>
-      </div>
-    </div>
-
-    <section class="panel">
-      <h2>Dernières fiches</h2>
-      <div class="table-wrap soft-card">
-        <table class="list-table">
-          <thead><tr><th>ID</th><th>Titre</th><th>Solution</th></tr></thead>
-          <tbody>
-            {% for f in recent %}
-            <tr class="row-fade">
-              <td>{{ f.pk }}</td>
-              <td><a href="{% url 'installations-detail' f.pk %}">{{ f.client_nom|default:'(sans titre)' }}</a></td>
-              <td>{{ f.get_solution_display }}</td>
-            </tr>
-            {% empty %}
-            <tr><td colspan="3">Aucune fiche trouvée.</td></tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+    <section class="metrics-grid" aria-label="Indicateurs">
+      <article class="metric-card accent-orange" data-animate-card>
+        <span>Total fiches</span>
+        <strong>{{ total }}</strong>
+        <small>{{ today_count }} creees aujourd'hui</small>
+      </article>
+      <article class="metric-card accent-green" data-animate-card>
+        <span>Signees</span>
+        <strong>{{ signed_count }}</strong>
+        <small>Reception validee</small>
+      </article>
+      <article class="metric-card accent-amber" data-animate-card>
+        <span>Alertes checklist</span>
+        <strong>{{ issue_count }}</strong>
+        <small>Fiches avec probleme</small>
+      </article>
+      <article class="metric-card accent-red" data-animate-card>
+        <span>Jalons en retard</span>
+        <strong>{{ overdue_count }}</strong>
+        <small>Suivis a reprendre</small>
+      </article>
     </section>
-  </section>
+
+    <section class="dashboard-grid">
+      <article class="panel-card wide-panel">
+        <div class="panel-head">
+          <div>
+            <p class="overline">Activite recente</p>
+            <h2>Dernieres fiches</h2>
+          </div>
+          <div class="segmented" role="tablist" aria-label="Filtre fiches">
+            <button class="is-selected" type="button" data-filter="all">Tout</button>
+            <button type="button" data-filter="signee">Signees</button>
+            <button type="button" data-filter="probleme">Alertes</button>
+          </div>
+        </div>
+
+        <div class="smart-list" data-smart-list>
+          {% for f in recent %}
+            <a class="install-row" href="{% url 'installations-detail' f.pk %}" data-status="{{ f.statut }}" data-problem-count="{{ f.probleme_count }}">
+              <span class="client-badge">{{ f.client_nom|first|default:"T" }}</span>
+              <span class="install-main">
+                <strong>{{ f.client_nom|default:"Client sans nom" }}</strong>
+                <small>{{ f.get_solution_display }} &middot; {{ f.date_installation|date:"d/m/Y" }}</small>
+              </span>
+              <span class="status-pill status-{{ f.statut }}">{{ f.get_statut_display }}</span>
+              <span class="row-meta">{{ f.ok_count }} OK</span>
+            </a>
+          {% empty %}
+            <div class="empty-soft">Aucune fiche pour le moment.</div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="panel-card">
+        <div class="panel-head">
+          <div>
+            <p class="overline">Solutions</p>
+            <h2>Repartition</h2>
+          </div>
+        </div>
+        <div class="solution-stack">
+          {% for item in by_solution %}
+            <div class="solution-item" style="--value: {{ item.percent }}%">
+              <div>
+                <strong>{{ item.label }}</strong>
+                <span>{{ item.count }} fiche{{ item.count|pluralize }}</span>
+              </div>
+              <div class="soft-meter"><span></span></div>
+            </div>
+          {% empty %}
+            <div class="empty-soft">Aucune solution enregistree.</div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="panel-card">
+        <div class="panel-head">
+          <div>
+            <p class="overline">Suivi client</p>
+            <h2>Prochains jalons</h2>
+          </div>
+        </div>
+        <div class="timeline">
+          {% for jalon in upcoming_jalons %}
+            <a class="timeline-item" href="{% url 'installations-detail' jalon.fiche.pk %}">
+              <span>{{ jalon.get_type_jalon_display }}</span>
+              <strong>{{ jalon.fiche.client_nom }}</strong>
+              <small>{{ jalon.date_prevue|date:"d/m/Y" }}</small>
+            </a>
+          {% empty %}
+            <div class="empty-soft">Aucun jalon a venir.</div>
+          {% endfor %}
+        </div>
+      </article>
+
+      <article class="panel-card compact-status">
+        <div class="panel-head">
+          <div>
+            <p class="overline">Statuts</p>
+            <h2>Cycle fiche</h2>
+          </div>
+        </div>
+        <div class="status-grid">
+          <div><span>Signees</span><strong>{{ status_counts.signee|default:0 }}</strong></div>
+          <div><span>Validees</span><strong>{{ status_counts.validee|default:0 }}</strong></div>
+          <div><span>Brouillons</span><strong>{{ status_counts.brouillon|default:0 }}</strong></div>
+        </div>
+      </article>
+    </section>
+  </main>
 </div>
 {% endblock %}
 

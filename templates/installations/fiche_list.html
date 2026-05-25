@@ -8,6 +8,11 @@
     <div>
       <p class="eyebrow">Historique</p>
       <h1>Fiches d'installation</h1>
+      {% if can_view_all %}
+        <p class="topbar-note">Vue globale equipe</p>
+      {% else %}
+        <p class="topbar-note">Vos fiches uniquement</p>
+      {% endif %}
     </div>
     <nav class="top-links" aria-label="Navigation fiches">
       <a href="{% url 'installations-create' %}" class="ghost-link">Nouvelle</a>

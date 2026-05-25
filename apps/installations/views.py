@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
 from django.utils import timezone
@@ -21,12 +21,33 @@ def _fiche_queryset():
     return InstallationFiche.objects.prefetch_related("checklist_items", "jalons")
 
 
+def _can_view_all(user):
+    return user.is_staff or user.groups.filter(name="Commercial").exists()
+
+
+def _visible_fiches_for(user):
+    if _can_view_all(user):
+        return _fiche_queryset()
+    return _fiche_queryset().filter(technicien=user)
+
+
+def _get_visible_fiche_or_403(user, pk):
+    fiche = get_object_or_404(_fiche_queryset(), pk=pk)
+    if _can_view_all(user) or fiche.technicien_id == user.id:
+        return fiche
+    return None
+
+
 @login_required
 def fiche_create(request):
     if request.method == "POST":
         form = InstallationFicheForm(request.POST)
         if form.is_valid():
-            fiche = form.save()
+            fiche = form.save(commit=False)
+            fiche.technicien = request.user
+            fiche.save()
+            fiche.create_checklist_items(form.cleaned_data["checklist_statuses"])
+            fiche.create_jalons()
             messages.success(request, "Fiche signee et enregistree.")
             return redirect("installations-detail", pk=fiche.pk)
     else:
@@ -46,13 +67,17 @@ def fiche_create(request):
 
 @login_required
 def fiche_detail(request, pk):
-    fiche = get_object_or_404(_fiche_queryset(), pk=pk)
+    fiche = _get_visible_fiche_or_403(request.user, pk)
+    if fiche is None:
+        return HttpResponseForbidden("Vous n'avez pas acces a cette fiche.")
     return render(request, "installations/fiche_detail.html", {"fiche": fiche})
 
 
 @login_required
 def fiche_pdf(request, pk):
-    fiche = get_object_or_404(_fiche_queryset(), pk=pk)
+    fiche = _get_visible_fiche_or_403(request.user, pk)
+    if fiche is None:
+        return HttpResponseForbidden("Vous n'avez pas acces a cette fiche.")
     html = render_to_string(
         "installations/fiche_pdf.html",
         {
@@ -71,8 +96,15 @@ def fiche_pdf(request, pk):
 
 @login_required
 def fiche_list(request):
-    fiches = InstallationFiche.objects.all()[:30]
-    return render(request, "installations/fiche_list.html", {"fiches": fiches})
+    fiches = _visible_fiches_for(request.user)[:30]
+    return render(
+        request,
+        "installations/fiche_list.html",
+        {
+            "fiches": fiches,
+            "can_view_all": _can_view_all(request.user),
+        },
+    )
 
 
 @staff_member_required(login_url="login")

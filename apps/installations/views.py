@@ -50,7 +50,7 @@ def fiche_list(request):
     return render(request, "installations/fiche_list.html", {"fiches": fiches})
 
 
-@staff_member_required
+@staff_member_required(login_url="login")
 def admin_panel(request):
     total = InstallationFiche.objects.count()
     today = timezone.localdate()

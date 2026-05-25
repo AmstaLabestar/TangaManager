@@ -9,7 +9,15 @@
       <p class="eyebrow">Reception confirmee</p>
       <h1>{{ fiche.client_nom }}</h1>
     </div>
-    <a href="{% url 'installations-create' %}" class="ghost-link">Nouvelle</a>
+    <nav class="top-links" aria-label="Actions fiche">
+      <a href="{% url 'installations-index' %}" class="ghost-link">Fiches</a>
+      <a href="{% url 'installations-pdf' fiche.pk %}" class="ghost-link">PDF</a>
+      <a href="{% url 'installations-create' %}" class="ghost-link">Nouvelle</a>
+      {% if request.user.is_staff %}
+        <a href="{% url 'installations-admin-panel' %}" class="ghost-link">Dashboard</a>
+        <a href="{% url 'admin:index' %}" class="ghost-link">Django admin</a>
+      {% endif %}
+    </nav>
   </header>
 
   <section class="recap-grid">
@@ -50,4 +58,3 @@
   </section>
 </article>
 {% endblock %}
-

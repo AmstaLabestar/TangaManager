@@ -125,6 +125,13 @@ h2 {
   background: rgba(255, 255, 255, .13);
 }
 
+.top-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .notice {
   margin: 16px 18px 0;
   padding: 12px 14px;
@@ -675,6 +682,15 @@ textarea:focus {
   .recap-grid {
     padding-left: 16px;
     padding-right: 16px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .top-links {
+    justify-content: flex-start;
   }
 
   .grid,

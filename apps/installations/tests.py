@@ -44,15 +44,9 @@ class InstallationFlowTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Dashboard")
 
-    def test_create_signed_installation_creates_checklist_and_jalons(self):
-        user = get_user_model().objects.create_user(
-            username="technicien",
-            password="test-password",
-        )
-        self.client.force_login(user)
-
+    def _create_signed_fiche(self):
         statuses = ["ok"] * len(checklist_for_solution("feelback"))
-        response = self.client.post(
+        self.client.post(
             reverse("installations-create"),
             data={
                 "client_nom": "BTP SARL",
@@ -78,12 +72,49 @@ class InstallationFlowTests(TestCase):
                 "signature_technicien_data": PNG_DATA_URL,
             },
         )
+        return InstallationFiche.objects.get()
 
-        self.assertEqual(response.status_code, 302)
-        fiche = InstallationFiche.objects.get()
+    def test_create_signed_installation_creates_checklist_and_jalons(self):
+        user = get_user_model().objects.create_user(
+            username="technicien",
+            password="test-password",
+        )
+        self.client.force_login(user)
+
+        fiche = self._create_signed_fiche()
+
         self.assertEqual(fiche.statut, "signee")
-        self.assertEqual(fiche.checklist_items.count(), len(statuses))
+        self.assertEqual(fiche.checklist_items.count(), len(checklist_for_solution("feelback")))
         self.assertEqual(fiche.jalons.count(), 3)
+
+    def test_signed_installation_can_be_exported_as_pdf(self):
+        user = get_user_model().objects.create_user(
+            username="technicien-pdf",
+            password="test-password",
+        )
+        self.client.force_login(user)
+        fiche = self._create_signed_fiche()
+
+        response = self.client.get(reverse("installations-pdf", args=[fiche.pk]))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "application/pdf")
+        self.assertTrue(response.content.startswith(b"%PDF"))
+
+    def test_staff_detail_has_admin_navigation(self):
+        user = get_user_model().objects.create_user(
+            username="admin-navigation",
+            password="test-password",
+            is_staff=True,
+        )
+        self.client.force_login(user)
+        fiche = self._create_signed_fiche()
+
+        response = self.client.get(reverse("installations-detail", args=[fiche.pk]))
+
+        self.assertContains(response, "Dashboard")
+        self.assertContains(response, "Django admin")
+        self.assertContains(response, "PDF")
 
     def test_invalid_installation_shows_clear_errors(self):
         user = get_user_model().objects.create_user(

@@ -1,15 +1,24 @@
 import json
+import re
+from pathlib import Path
 
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
 from django.utils import timezone
+from weasyprint import HTML
 
 from .constants import CHECKLISTS, SOLUTION_CHOICES
 from .forms import InstallationFicheForm
 from .models import InstallationFiche, Jalon
+
+
+def _fiche_queryset():
+    return InstallationFiche.objects.prefetch_related("checklist_items", "jalons")
 
 
 @login_required
@@ -37,11 +46,27 @@ def fiche_create(request):
 
 @login_required
 def fiche_detail(request, pk):
-    fiche = get_object_or_404(
-        InstallationFiche.objects.prefetch_related("checklist_items", "jalons"),
-        pk=pk,
-    )
+    fiche = get_object_or_404(_fiche_queryset(), pk=pk)
     return render(request, "installations/fiche_detail.html", {"fiche": fiche})
+
+
+@login_required
+def fiche_pdf(request, pk):
+    fiche = get_object_or_404(_fiche_queryset(), pk=pk)
+    html = render_to_string(
+        "installations/fiche_pdf.html",
+        {
+            "fiche": fiche,
+            "signature_client_uri": Path(fiche.signature_client.path).as_uri(),
+            "signature_technicien_uri": Path(fiche.signature_technicien.path).as_uri(),
+        },
+        request=request,
+    )
+    pdf = HTML(string=html, base_url=request.build_absolute_uri("/")).write_pdf()
+    filename = re.sub(r"[^A-Za-z0-9_-]+", "-", fiche.client_nom).strip("-").lower()
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = f'attachment; filename="fiche-{filename or fiche.pk}.pdf"'
+    return response
 
 
 @login_required

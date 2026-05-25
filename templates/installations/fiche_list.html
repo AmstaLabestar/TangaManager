@@ -9,7 +9,13 @@
       <p class="eyebrow">Historique</p>
       <h1>Fiches d'installation</h1>
     </div>
-    <a href="{% url 'installations-create' %}" class="ghost-link">Nouvelle</a>
+    <nav class="top-links" aria-label="Navigation fiches">
+      <a href="{% url 'installations-create' %}" class="ghost-link">Nouvelle</a>
+      {% if request.user.is_staff %}
+        <a href="{% url 'installations-admin-panel' %}" class="ghost-link">Dashboard</a>
+        <a href="{% url 'admin:index' %}" class="ghost-link">Django admin</a>
+      {% endif %}
+    </nav>
   </header>
 
   <div class="list-stack">
@@ -30,4 +36,3 @@
   </div>
 </section>
 {% endblock %}
-

@@ -18,9 +18,15 @@
     <a href="{% url 'installations-index' %}" class="ghost-link">Fiches</a>
   </header>
 
+  <div class="form-feedback" id="form-feedback" role="alert" aria-live="polite" hidden></div>
+
   {% if form.errors %}
-    <div class="notice">
-      Certains champs doivent etre corriges avant la signature finale.
+    <div class="notice error-summary" role="alert">
+      <strong>La fiche n'a pas ete enregistree.</strong>
+      <span>Corrigez les champs signales ci-dessous, puis reessayez.</span>
+      {% if form.non_field_errors %}
+        {{ form.non_field_errors }}
+      {% endif %}
     </div>
   {% endif %}
 
@@ -40,15 +46,15 @@
       <h2>Client et technicien</h2>
     </div>
     <div class="grid">
-      <label>Entreprise / client {{ form.client_nom }}</label>
-      <label>Contact principal {{ form.client_contact }}</label>
-      <label>Poste {{ form.client_poste }}</label>
-      <label>Telephone {{ form.client_telephone }}</label>
-      <label>Email {{ form.client_email }}</label>
-      <label>Adresse / site {{ form.client_adresse }}</label>
-      <label>Technicien TANGA {{ form.technicien_nom }}</label>
-      <label>Date {{ form.date_installation }}</label>
-      <label>Heure de fin {{ form.heure_installation }}</label>
+      <label>Entreprise / client {{ form.client_nom }} {{ form.client_nom.errors }}</label>
+      <label>Contact principal {{ form.client_contact }} {{ form.client_contact.errors }}</label>
+      <label>Poste {{ form.client_poste }} {{ form.client_poste.errors }}</label>
+      <label>Telephone {{ form.client_telephone }} {{ form.client_telephone.errors }}</label>
+      <label>Email {{ form.client_email }} {{ form.client_email.errors }}</label>
+      <label>Adresse / site {{ form.client_adresse }} {{ form.client_adresse.errors }}</label>
+      <label>Technicien TANGA {{ form.technicien_nom }} {{ form.technicien_nom.errors }}</label>
+      <label>Date {{ form.date_installation }} {{ form.date_installation.errors }}</label>
+      <label>Heure de fin {{ form.heure_installation }} {{ form.heure_installation.errors }}</label>
     </div>
   </section>
 
@@ -65,14 +71,14 @@
         </button>
       {% endfor %}
     </div>
-    <div class="hidden-native">{{ form.solution }}</div>
+    <div class="hidden-native">{{ form.solution }} {{ form.solution.errors }}</div>
     <div class="grid">
-      <label>Numero de serie {{ form.numero_serie }}</label>
-      <label>Quantite / unites {{ form.quantite }}</label>
-      <label>Version firmware {{ form.version_firmware }}</label>
-      <label>WiFi configure {{ form.wifi_ssid }}</label>
-      <label>IP statique {{ form.ip_statique }}</label>
-      <label>Acces distant {{ form.acces_distant }}</label>
+      <label>Numero de serie {{ form.numero_serie }} {{ form.numero_serie.errors }}</label>
+      <label>Quantite / unites {{ form.quantite }} {{ form.quantite.errors }}</label>
+      <label>Version firmware {{ form.version_firmware }} {{ form.version_firmware.errors }}</label>
+      <label>WiFi configure {{ form.wifi_ssid }} {{ form.wifi_ssid.errors }}</label>
+      <label>IP statique {{ form.ip_statique }} {{ form.ip_statique.errors }}</label>
+      <label>Acces distant {{ form.acces_distant }} {{ form.acces_distant.errors }}</label>
     </div>
   </section>
 
@@ -90,10 +96,10 @@
           <button type="button" data-rating="{{ value }}">{{ value }}</button>
         {% endfor %}
       </div>
-      {{ form.note_formation }}
+      {{ form.note_formation }} {{ form.note_formation.errors }}
       <p id="rating-label" class="soft-copy">Selectionnez le niveau d'autonomie du client.</p>
     </div>
-    <label>Observations {{ form.observations }}</label>
+    <label>Observations {{ form.observations }} {{ form.observations.errors }}</label>
   </section>
 
   <section class="screen" data-step="3">
@@ -107,21 +113,24 @@
     <div class="signature-grid">
       <div>
         <label>Signature client</label>
-        <div class="signature-pad">
+        <div class="signature-pad" tabindex="-1">
           <canvas id="client-signature" width="760" height="250"></canvas>
           <span>Signer ici</span>
         </div>
         <button type="button" class="mini-button" data-clear="client-signature">Effacer</button>
+        {{ form.signature_client_data.errors }}
       </div>
       <div>
         <label>Signature technicien</label>
-        <div class="signature-pad">
+        <div class="signature-pad" tabindex="-1">
           <canvas id="tech-signature" width="760" height="250"></canvas>
           <span>Signature technicien</span>
         </div>
         <button type="button" class="mini-button" data-clear="tech-signature">Effacer</button>
+        {{ form.signature_technicien_data.errors }}
       </div>
     </div>
+    {{ form.checklist_statuses.errors }}
   </section>
 
   <footer class="actionbar">
@@ -134,4 +143,3 @@
 <script id="checklists-data" type="application/json">{{ checklists_json|safe }}</script>
 <script src="{% static 'installations/app.js' %}"></script>
 {% endblock %}
-

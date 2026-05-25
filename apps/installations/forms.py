@@ -12,9 +12,18 @@ from .models import InstallationFiche
 
 
 class InstallationFicheForm(forms.ModelForm):
-    checklist_statuses = forms.CharField(widget=forms.HiddenInput)
-    signature_client_data = forms.CharField(widget=forms.HiddenInput)
-    signature_technicien_data = forms.CharField(widget=forms.HiddenInput)
+    checklist_statuses = forms.CharField(
+        widget=forms.HiddenInput,
+        error_messages={"required": "La checklist n'a pas ete initialisee. Selectionnez une solution."},
+    )
+    signature_client_data = forms.CharField(
+        widget=forms.HiddenInput,
+        error_messages={"required": "La signature client est obligatoire."},
+    )
+    signature_technicien_data = forms.CharField(
+        widget=forms.HiddenInput,
+        error_messages={"required": "La signature technicien est obligatoire."},
+    )
 
     class Meta:
         model = InstallationFiche
@@ -53,9 +62,22 @@ class InstallationFicheForm(forms.ModelForm):
         self.fields["date_installation"].initial = timezone.localdate()
         self.fields["note_formation"].min_value = 1
         self.fields["note_formation"].max_value = 5
+        required_labels = {
+            "client_nom": "Indiquez le nom de l'entreprise ou du client.",
+            "client_contact": "Indiquez le nom de la personne qui receptionne.",
+            "technicien_nom": "Indiquez le nom du technicien TANGA.",
+            "date_installation": "Indiquez la date d'installation.",
+            "solution": "Selectionnez la solution installee.",
+            "numero_serie": "Indiquez le numero de serie du materiel.",
+            "note_formation": "Notez la formation client de 1 a 5.",
+        }
         for name, field in self.fields.items():
             if name not in {"checklist_statuses", "signature_client_data", "signature_technicien_data"}:
                 field.widget.attrs.setdefault("class", "field")
+            if name in required_labels:
+                field.error_messages["required"] = required_labels[name]
+        self.fields["client_email"].error_messages["invalid"] = "Entrez une adresse email valide."
+        self.fields["ip_statique"].error_messages["invalid"] = "Entrez une adresse IP valide, par exemple 192.168.1.50."
 
     def clean_checklist_statuses(self):
         value = self.cleaned_data["checklist_statuses"]

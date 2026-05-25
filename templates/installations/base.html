@@ -11,6 +11,13 @@
 </head>
 <body class="{% block body_class %}{% endblock %}">
   <main class="shell">
+    {% if messages %}
+      <div class="message-stack" role="status" aria-live="polite">
+        {% for message in messages %}
+          <div class="message {{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
     {% block content %}{% endblock %}
   </main>
   {% block extra_scripts %}{% endblock %}

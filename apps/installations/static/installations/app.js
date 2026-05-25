@@ -9,6 +9,7 @@
   const backButton = document.getElementById("back-button");
   const nextButton = document.getElementById("next-button");
   const submitButton = document.getElementById("submit-button");
+  const feedback = document.getElementById("form-feedback");
   const checklistEl = document.getElementById("checklist");
   const solutionField = document.getElementById("id_solution");
   const checklistField = document.getElementById("id_checklist_statuses");
@@ -55,15 +56,43 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
+  function clearFeedback() {
+    if (!feedback) return;
+    feedback.hidden = true;
+    feedback.textContent = "";
+    document.querySelectorAll(".field.is-invalid, .signature-pad.is-invalid").forEach((field) => {
+      field.classList.remove("is-invalid");
+      field.removeAttribute("aria-invalid");
+    });
+  }
+
+  function showFeedback(message, target) {
+    if (feedback) {
+      feedback.textContent = message;
+      feedback.hidden = false;
+    }
+    if (target) {
+      target.classList.add("is-invalid");
+      target.setAttribute("aria-invalid", "true");
+      window.setTimeout(() => target.focus({ preventScroll: true }), 80);
+    }
+  }
+
+  function showStepError(step, message, target) {
+    setStep(step);
+    window.setTimeout(() => showFeedback(message, target), 120);
+    return false;
+  }
+
   function requireValue(id, message) {
     const field = document.getElementById(id);
     if (!field || field.value.trim()) return true;
-    field.focus();
-    alert(message);
+    showFeedback(message, field);
     return false;
   }
 
   function canLeaveStep() {
+    clearFeedback();
     if (state.step === 0) {
       return (
         requireValue("id_client_nom", "Le nom du client est requis.") &&
@@ -74,14 +103,14 @@
     }
     if (state.step === 1) {
       if (!solutionField.value) {
-        alert("Selectionnez une solution installee.");
+        showFeedback("Selectionnez la solution installee avant de continuer.", document.querySelector("[data-solution]"));
         return false;
       }
       return requireValue("id_numero_serie", "Le numero de serie est requis.");
     }
     if (state.step === 2) {
       if (!ratingField.value) {
-        alert("Selectionnez la note de formation client.");
+        showFeedback("Selectionnez la note de formation client de 1 a 5.", document.querySelector("[data-rating]"));
         return false;
       }
     }
@@ -143,6 +172,7 @@
       });
       button.classList.add("is-selected");
       solutionField.value = button.dataset.solution;
+      clearFeedback();
       buildChecklist(button.dataset.solution);
     });
   });
@@ -151,6 +181,7 @@
     button.addEventListener("click", () => {
       const value = button.dataset.rating;
       ratingField.value = value;
+      clearFeedback();
       document.querySelectorAll("[data-rating]").forEach((node) => {
         node.classList.toggle("is-selected", Number(node.dataset.rating) <= Number(value));
       });
@@ -184,6 +215,7 @@
       drawing = true;
       last = position(event);
       wrapper.classList.add("has-ink");
+      wrapper.classList.remove("is-invalid");
       state.signatures[canvasId] = true;
     }
 
@@ -221,6 +253,7 @@
       const canvas = document.getElementById(button.dataset.clear);
       canvas.getContext("2d").clearRect(0, 0, canvas.width, canvas.height);
       canvas.closest(".signature-pad").classList.remove("has-ink");
+      canvas.closest(".signature-pad").classList.remove("is-invalid");
       state.signatures[button.dataset.clear] = false;
       if (button.dataset.clear === "client-signature") clientSigField.value = "";
       if (button.dataset.clear === "tech-signature") techSigField.value = "";
@@ -230,7 +263,16 @@
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
       const target = Number(tab.dataset.jump);
-      if (target <= state.step || canLeaveStep()) setStep(target);
+      if (target <= state.step) {
+        clearFeedback();
+        setStep(target);
+        return;
+      }
+      if (target > state.step + 1) {
+        showFeedback("Avancez etape par etape pour ne rien oublier.", tabs[state.step + 1]);
+        return;
+      }
+      if (canLeaveStep()) setStep(target);
     });
   });
 
@@ -240,19 +282,27 @@
   });
 
   form.addEventListener("submit", (event) => {
+    clearFeedback();
     syncChecklist();
     if (!state.signatures["client-signature"]) {
       event.preventDefault();
-      alert("La signature client est requise.");
+      showStepError(
+        3,
+        "La signature client est requise avant d'enregistrer la fiche.",
+        document.getElementById("client-signature").closest(".signature-pad")
+      );
       return;
     }
     if (!state.signatures["tech-signature"]) {
       event.preventDefault();
-      alert("La signature technicien est requise.");
+      showStepError(
+        3,
+        "La signature technicien est requise avant d'enregistrer la fiche.",
+        document.getElementById("tech-signature").closest(".signature-pad")
+      );
     }
   });
 
   buildChecklist(solutionField.value || "presencerh_rfid");
   setStep(0);
 })();
-

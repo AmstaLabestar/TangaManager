@@ -44,6 +44,28 @@ textarea {
   padding: 18px 14px 40px;
 }
 
+.message-stack {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 720px);
+  margin: 0 auto 12px;
+}
+
+.message {
+  padding: 12px 14px;
+  border: 1px solid rgba(25, 118, 66, .22);
+  border-radius: 14px;
+  color: var(--green);
+  background: #effaf3;
+  font-weight: 750;
+}
+
+.message.error {
+  border-color: rgba(180, 35, 24, .24);
+  color: var(--red);
+  background: #fff0ef;
+}
+
 .app-card {
   overflow: hidden;
   width: min(100%, 720px);
@@ -110,6 +132,52 @@ h2 {
   border-radius: 14px;
   color: #7a2d00;
   background: #fff2e9;
+}
+
+.error-summary,
+.form-feedback {
+  display: grid;
+  gap: 5px;
+  line-height: 1.45;
+}
+
+.form-feedback {
+  position: sticky;
+  top: 10px;
+  z-index: 20;
+  margin: 16px 18px 0;
+  padding: 13px 14px;
+  border: 1px solid rgba(180, 35, 24, .28);
+  border-radius: 14px;
+  color: #7a1b14;
+  background: #fff0ef;
+  box-shadow: 0 14px 32px rgba(180, 35, 24, .08);
+}
+
+.form-feedback[hidden] {
+  display: none;
+}
+
+.errorlist {
+  display: grid;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 750;
+  list-style: none;
+}
+
+.field.is-invalid,
+.signature-pad.is-invalid,
+label:has(.errorlist:not(:empty)) .field {
+  border-color: rgba(180, 35, 24, .75);
+  box-shadow: 0 0 0 4px rgba(180, 35, 24, .1);
+}
+
+.signature-pad.is-invalid {
+  background: #fff7f6;
 }
 
 .progress-panel {

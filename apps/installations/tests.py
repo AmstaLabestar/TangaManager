@@ -84,3 +84,16 @@ class InstallationFlowTests(TestCase):
         self.assertEqual(fiche.statut, "signee")
         self.assertEqual(fiche.checklist_items.count(), len(statuses))
         self.assertEqual(fiche.jalons.count(), 3)
+
+    def test_invalid_installation_shows_clear_errors(self):
+        user = get_user_model().objects.create_user(
+            username="technicien-erreur",
+            password="test-password",
+        )
+        self.client.force_login(user)
+
+        response = self.client.post(reverse("installations-create"), data={})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "pas ete enregistree")
+        self.assertContains(response, "Indiquez le nom")
